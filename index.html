@@ -140,7 +140,11 @@ function loadModule(name){
   var frame = document.getElementById("frame-"+name);
   try{
     var html = b64ToUtf8(MODULE_B64[name]);
-    frame.setAttribute("srcdoc", html);
+    // Cargar con Blob URL (no srcdoc): da al iframe el mismo origen que la plataforma,
+    // lo que permite que los modulos abran Gmail y otros enlaces externos.
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    frame.src = url;
     loaded[name] = true;
   }catch(e){
     alert("Error al cargar modulo "+name+": "+e.message);
